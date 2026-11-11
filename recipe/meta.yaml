@@ -18,7 +18,7 @@ requirements:
   host:
     - python {{ python_min }}
     - pip
-    - setuptools >=30.3
+    - setuptools >=61.2
     - setuptools_scm
 
   run:
@@ -28,16 +28,30 @@ requirements:
     - echo
     - qtpy
     - astropy-base
-    - pywwt >=0.21.0
+    - pywwt >=0.24.1
+    # pywwt >=0.26 imports nest_asyncio but its conda package does not
+    # depend on it
+    - nest-asyncio
     - packaging
+    - ipywidgets >=8
     - glue-qt
     - pyqtwebengine
 
 test:
   requires:
     - python {{ python_min }}
+    - pip
+    - glue-jupyter
+    # On Python 3.10 the solver can otherwise select dask 2023.3.0, which
+    # has no upper bound on numpy but fails to import with numpy 2
+    - dask-core >=2024.8
   imports:
     - glue_wwt
+    - glue_wwt.viewer
+    - glue_wwt.viewer.qt
+    - glue_wwt.viewer.jupyter
+  commands:
+    - pip check
 
 about:
   home: https://github.com/glue-viz/glue-wwt
